@@ -32,8 +32,11 @@ var aeTab = []struct {
 	{"x; q=0.4", "x", true},
 	{"x; q=0.4,", "x", true},
 	{"x; q=0.4 ,", "x", true},
+	{"x; q= 0.4", "x", false},
+	{"x; q =0.4", "x", false},
 	{"x; q=0.1err ,", "x", false},
 	{"x; q=err ,", "x", false},
+	{"x; q", "x", false},
 	{"x; q= ,", "x", false},
 	{"x; q=1", "x", true},
 	{"x; q=1", "x", true},
@@ -62,6 +65,14 @@ func TestAcceptEncoding(t *testing.T) {
 		have := Encoding(tc.header, tc.val)
 		if have != tc.want {
 			t.Errorf("tc#%d: have %v, want %v", i, have, tc.want)
+		}
+	}
+}
+
+func BenchmarkAcceptEncoding(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		for _, tc := range aeTab[:50] {
+			_ = Encoding(tc.header, tc.val)
 		}
 	}
 }
