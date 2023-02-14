@@ -1,7 +1,6 @@
 package accept
 
 import (
-	"strconv"
 	"strings"
 )
 
@@ -20,23 +19,11 @@ func Encoding(header, val string) bool {
 	}
 
 	for _, s := range strings.Split(header, ",") {
-		s, w, _ := strings.Cut(s, ";")
-		s = strings.TrimSpace(s)
-		w = strings.TrimSpace(w)
-		if w == "" {
-			if matchval(s, val) {
-				return true
-			}
-			continue
-		}
-		if !strings.HasPrefix(w, "q=") {
-			continue
-		}
-		q, err := strconv.ParseFloat(w[2:], 64)
+		e, err := parseEncoding(s)
 		if err != nil {
 			continue
 		}
-		if q > 0 && matchval(s, val) {
+		if e.weight > 0 && matchval(e.token, val) {
 			return true
 		}
 	}
