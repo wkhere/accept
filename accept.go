@@ -1,7 +1,5 @@
 package accept
 
-// todo: switch to Ragel
-
 import (
 	"strconv"
 	"strings"
