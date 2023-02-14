@@ -34,7 +34,7 @@ func Encoding(header, val string) bool {
 		if !strings.HasPrefix(w, "q=") {
 			continue
 		}
-		q, err := strconv.ParseFloat(w[2:], 32)
+		q, err := strconv.ParseFloat(w[2:], 64)
 		if err != nil {
 			continue
 		}
