@@ -17,10 +17,12 @@ func Encoding(header, val string) bool {
 	if header == "" || val == "" {
 		return false
 	}
-
-	for _, s := range strings.Split(header, ",") {
-		e, err := parseEncoding(s)
-		if err != nil {
+	ee, err := parseEncodings(header)
+	if err != nil {
+		return false
+	}
+	for _, e := range ee {
+		if e.token == "" {
 			continue
 		}
 		if e.weight > 0 && matchval(e.token, val) {

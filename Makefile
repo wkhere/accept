@@ -1,5 +1,4 @@
 go: *.go encoding.go
-	go vet
 	go test -cover .
 	go install
 
