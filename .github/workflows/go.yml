@@ -1,44 +1,26 @@
 name: Go
-on: [push]
+
+on:
+  push:
+    branches: [ master, exp ]
+  pull_request:
+    branches: [ master ]
+
 jobs:
 
-  test:
-    name: Test
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
-
-    - uses: actions/cache@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
       with:
-        path: ~/.cache/go-build
-        key: gocache-${{ github.sha }}
-        restore-keys: |
-          gocache-
+        go-version-file: go.mod
 
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.18
-      id: go
+    - run: go build ./...
+    - run: go test -coverprofile=coverage.out ./...
 
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v3
-
-    - name: Get dependencies
-      run: |
-        go get -t
-
-    - name: Vet
-      run: go vet
-
-    - name: Run tests & coverage
-      run: |
-        go test -coverprofile=coverage.out
-
-    - name: Convert coverage to lcov
-      uses: jandelgado/gcov2lcov-action@v1
-
-    - name: Coveralls
-      uses: coverallsapp/github-action@master
+    - uses: jandelgado/gcov2lcov-action@v1
+    - uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.github_token }}
         path-to-lcov: coverage.lcov
